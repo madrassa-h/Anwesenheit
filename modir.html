@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=cover"/>
+  <title>Abwesenheit Admin – Madrassa Hannover</title>
+  <meta name="robots" content="noindex,nofollow"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --cream:#faf6ef;--beige:#f0e8d6;--sand:#d4c9b0;
+      --gold:#c4973a;--gold-light:#e8b84b;
+      --dark:#1d3a6e;--mid:#6b6355;--text:#1a1a1a;
+      --blue:#2c5282;--blue-light:#4070b8;--blue-dark:#1d3a6e;
+      --green:#27ae60;--green-bg:rgba(39,174,96,.1);--green-dark:#1a7a42;
+      --red:#c0392b;--red-bg:#fdf0ef;
+      --orange:#e67e22;--orange-bg:#fef3e8;
+    }
+    body{font-family:'Jost',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;}
+    button,input,select,a{touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
+    input,select,textarea{font-size:max(16px,.88rem)!important;}
+
+    /* ── LOGIN ── */
+    #loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--blue-dark) 0%,var(--blue) 60%,var(--blue-light) 100%);padding:24px;padding-top:calc(24px + env(safe-area-inset-top,0px));}
+    .login-box{background:var(--cream);padding:50px 44px;width:100%;max-width:380px;animation:fadeUp .3s ease;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.3);}
+    .login-logo{font-family:'Cormorant Garamond',serif;font-size:1.9rem;font-weight:300;letter-spacing:.1em;margin-bottom:4px;color:var(--dark);}
+    .login-logo span{color:var(--gold);}
+    .login-sub{font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--mid);margin-bottom:32px;}
+    .login-field{margin-bottom:16px;}
+    .login-field label{display:block;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--mid);margin-bottom:6px;}
+    .login-field input{width:100%;padding:12px 14px;border:1px solid var(--sand);background:#fff;font-family:'Jost',sans-serif;outline:none;transition:border-color .2s;border-radius:6px;}
+    .login-field input:focus{border-color:var(--gold);}
+    .login-btn{width:100%;background:linear-gradient(135deg,var(--blue),var(--blue-light));color:#fff;border:none;padding:14px;cursor:pointer;font-family:'Jost',sans-serif;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;border-radius:8px;margin-top:8px;}
+    .login-btn:hover{opacity:.85;}
+    .login-err{display:none;background:rgba(192,57,43,.1);color:var(--red);font-size:.78rem;padding:10px 12px;margin-top:12px;border-left:3px solid var(--red);border-radius:4px;}
+
+    /* ── APP ── */
+    #adminApp{display:none;min-height:100vh;}
+
+    /* ── NAV ── */
+    .adm-nav{
+      background:linear-gradient(135deg,var(--blue-dark) 0%,var(--blue) 60%,var(--blue-light) 100%);
+      padding:0 24px;display:flex;align-items:center;
+      position:sticky;top:0;z-index:100;flex-wrap:wrap;
+      box-shadow:0 2px 12px rgba(44,82,130,.3);
+      padding-top:env(safe-area-inset-top,0px);
+    }
+    .adm-logo-wrap{display:flex;align-items:center;gap:10px;padding:8px 18px 8px 0;border-right:1px solid rgba(255,255,255,.1);margin-right:8px;}
+    .adm-logo-wrap img{width:46px;height:46px;object-fit:contain;border-radius:50%;background:#fff;padding:3px;}
+    .adm-logo{font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--cream);letter-spacing:.08em;white-space:nowrap;}
+    .adm-logo span{color:var(--gold);}
+    .adm-tab{background:none;border:none;padding:16px 13px;cursor:pointer;font-family:'Jost',sans-serif;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.7);border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;}
+    .adm-tab.on{color:var(--gold);border-bottom-color:var(--gold);}
+    .adm-tab:hover{color:#fff;}
+    .adm-nav-actions{margin-left:auto;display:flex;align-items:center;gap:8px;flex-shrink:0;}
+    .hdr-icon-btn{width:36px;height:36px;border-radius:10px;border:none;background:rgba(255,255,255,.15);color:#fff;font-size:1.05rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;flex-shrink:0;text-decoration:none;}
+    .hdr-icon-btn:hover{background:rgba(255,255,255,.28);}
+    .hdr-icon-btn.active-page{background:rgba(255,255,255,.32);outline:2px solid rgba(255,255,255,.5);}
+
+    /* ── BODY ── */
+    .adm-body{padding:28px;max-width:1280px;margin:0 auto;}
+    .adm-page{display:none;}
+    .adm-page.on{display:block;}
+    .adm-ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px;}
+    .adm-title{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:300;color:var(--dark);}
+
+    /* ── BUTTONS ── */
+    .adm-btn-g{background:var(--gold);color:#fff;border:none;padding:10px 22px;cursor:pointer;font-family:'Jost',sans-serif;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;transition:opacity .2s;border-radius:6px;}
+    .adm-btn-g:hover{opacity:.85;}
+    .adm-btn-d{background:linear-gradient(135deg,var(--blue),var(--blue-light));color:#fff;border:none;padding:10px 22px;cursor:pointer;font-family:'Jost',sans-serif;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;border-radius:6px;transition:opacity .2s;}
+    .adm-btn-d:hover{opacity:.85;}
+    .adm-btn-r{background:var(--red);color:#fff;border:none;padding:7px 14px;cursor:pointer;font-family:'Jost',sans-serif;font-size:.65rem;letter-spacing:.06em;text-transform:uppercase;border-radius:6px;transition:opacity .2s;}
+    .adm-btn-r:hover{opacity:.85;}
+    .adm-btn-export{background:#fff;border:1px solid var(--sand);color:var(--mid);padding:7px 13px;cursor:pointer;font-family:'Jost',sans-serif;font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;transition:all .2s;display:inline-flex;align-items:center;gap:5px;border-radius:6px;}
+    .adm-btn-export:hover{border-color:var(--gold);color:var(--gold);}
+
+    /* ── STATS ── */
+    .adm-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:26px;}
+    .adm-stat{background:#fff;padding:20px;border-left:3px solid var(--gold);box-shadow:0 2px 8px rgba(44,82,130,.08);border-radius:4px;}
+    .adm-stat.blue{border-left-color:var(--blue);}
+    .adm-stat.green{border-left-color:var(--green);}
+    .adm-stat.red{border-left-color:var(--red);}
+    .adm-stat.orange{border-left-color:var(--orange);}
+    .adm-stat-n{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:300;color:var(--dark);line-height:1;}
+    .adm-stat.blue .adm-stat-n{color:var(--blue);}
+    .adm-stat.green .adm-stat-n{color:var(--green);}
+    .adm-stat.red .adm-stat-n{color:var(--red);}
+    .adm-stat.orange .adm-stat-n{color:var(--orange);}
+    .adm-stat-l{font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mid);margin-top:5px;}
+
+    /* ── TABLE ── */
+    .adm-table{width:100%;background:#fff;overflow-x:auto;display:block;box-shadow:0 2px 8px rgba(0,0,0,.04);border-radius:8px;}
+    .adm-table table{width:100%;border-collapse:collapse;min-width:500px;}
+    .adm-table th{font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mid);text-align:left;padding:12px 14px;border-bottom:2px solid var(--sand);white-space:nowrap;background:var(--beige);}
+    .adm-table td{padding:11px 14px;border-bottom:1px solid var(--beige);font-size:.82rem;vertical-align:middle;}
+    .adm-table tr:last-child td{border-bottom:none;}
+    .adm-table tr:hover td{background:#fdf9f5;}
+    .adm-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.62rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;}
+    .badge-green{background:var(--green-bg);color:var(--green-dark);}
+    .badge-red{background:var(--red-bg);color:var(--red);}
+    .badge-orange{background:var(--orange-bg);color:var(--orange);}
+    .badge-sand{background:var(--beige);color:var(--mid);}
+    .badge-blue{background:#eaf1fb;color:var(--blue);}
+
+    /* ── FILTER ── */
+    .adm-filterbar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center;}
+    .adm-search{padding:8px 12px;border:1px solid var(--sand);background:#fff;font-family:'Jost',sans-serif;color:var(--text);outline:none;min-width:200px;transition:border-color .2s;border-radius:6px;}
+    .adm-search:focus{border-color:var(--gold);}
+    .adm-sel{padding:8px 10px;border:1px solid var(--sand);background:#fff;font-family:'Jost',sans-serif;color:var(--text);outline:none;cursor:pointer;border-radius:6px;}
+    .adm-sel:focus{border-color:var(--gold);}
+
+    /* ── GRID CARDS ── */
+    .card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-bottom:24px;}
+    .info-card{background:#fff;border-radius:8px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.05);border-top:3px solid var(--blue);}
+    .info-card.gold{border-top-color:var(--gold);}
+    .info-card.green{border-top-color:var(--green);}
+    .info-card.red{border-top-color:var(--red);}
+    .info-card h4{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:400;color:var(--dark);margin-bottom:10px;}
+
+    /* ── PROGRESS BARS ── */
+    .bar-wrap{display:flex;flex-direction:column;gap:10px;}
+    .bar-row-c{display:flex;align-items:center;gap:10px;}
+    .bar-lbl{width:120px;font-size:.75rem;color:var(--mid);flex-shrink:0;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .bar-track{flex:1;height:9px;background:var(--sand);border-radius:999px;overflow:hidden;}
+    .bar-fill{height:100%;border-radius:999px;transition:width .6s ease;}
+    .bar-fill.blue{background:linear-gradient(90deg,var(--blue-dark),var(--blue-light));}
+    .bar-fill.green{background:linear-gradient(90deg,var(--green-dark),var(--green));}
+    .bar-fill.red{background:var(--red);}
+    .bar-fill.orange{background:var(--orange);}
+    .bar-val{font-size:.78rem;font-weight:600;color:var(--dark);width:36px;text-align:right;}
+
+    /* ── MODAL ── */
+    .adm-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;align-items:center;justify-content:center;padding:20px;}
+    .adm-modal.on{display:flex;}
+    .adm-mbox{background:var(--cream);padding:36px;width:100%;max-width:600px;max-height:92vh;overflow-y:auto;position:relative;animation:fadeUp .2s ease;border-radius:12px;}
+    .adm-mbox h3{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;color:var(--dark);margin-bottom:20px;}
+    .adm-fg{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;}
+    .adm-fg label{font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mid);}
+    .adm-fg input,.adm-fg select,.adm-fg textarea{padding:10px 13px;border:1px solid var(--sand);background:#fff;font-family:'Jost',sans-serif;color:var(--text);outline:none;width:100%;border-radius:6px;}
+    .adm-fg input:focus,.adm-fg select:focus,.adm-fg textarea:focus{border-color:var(--gold);}
+    .adm-frow{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+    .adm-msg{font-size:.78rem;padding:9px 12px;margin:8px 0;display:none;border-radius:4px;}
+    .adm-msg.ok{background:var(--green-bg);color:var(--green-dark);display:block;}
+    .adm-msg.err{background:var(--red-bg);color:var(--red);display:block;}
+
+    /* ── KLASSEN-KARTEN ── */
+    .klasse-karte{background:#fff;border-radius:8px;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,.05);border-left:4px solid var(--blue);margin-bottom:14px;}
+    .kk-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+    .kk-name{font-family:'Cormorant Garamond',serif;font-size:1.25rem;color:var(--dark);font-weight:400;}
+    .kk-meta{font-size:.75rem;color:var(--mid);margin-bottom:10px;}
+    .kk-actions{display:flex;gap:8px;}
+    .kk-schueler-count{display:inline-flex;align-items:center;gap:4px;background:var(--beige);color:var(--dark);font-size:.72rem;font-weight:500;padding:3px 10px;border-radius:20px;}
+
+    /* ── IMPORT AREA ── */
+    .import-drop{border:2px dashed var(--sand);border-radius:8px;padding:32px;text-align:center;cursor:pointer;transition:all .2s;background:#fff;}
+    .import-drop:hover,.import-drop.drag{border-color:var(--gold);background:#fffbf4;}
+    .import-drop-icon{font-size:2.5rem;margin-bottom:10px;}
+    .import-drop-text{font-size:.82rem;color:var(--mid);line-height:1.7;}
+    .import-drop input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;}
+
+    /* ── AUSWERTUNG SCHÜLER TABELLE ── */
+    .quote-cell{display:flex;align-items:center;gap:8px;}
+    .quote-mini-bar{flex:1;height:6px;background:var(--sand);border-radius:3px;overflow:hidden;min-width:60px;}
+    .quote-mini-fill{height:100%;border-radius:3px;}
+    .quote-pct{font-size:.75rem;font-weight:600;min-width:36px;}
+
+    /* ── MOBILE NAV ── */
+    .mob-bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--sand);z-index:300;box-shadow:0 -2px 12px rgba(0,0,0,.1);padding-bottom:env(safe-area-inset-bottom,0px);}
+    .mob-bnav-inner{display:flex;overflow-x:auto;scrollbar-width:none;}
+    .mob-bnav-inner::-webkit-scrollbar{display:none;}
+    .mob-nav-item{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;padding:10px 14px 8px;cursor:pointer;border:none;background:none;font-family:'Jost',sans-serif;color:var(--mid);font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;gap:4px;transition:color .2s;-webkit-tap-highlight-color:transparent;min-height:56px;}
+    .mob-nav-item.on{color:var(--blue);}
+    .mob-nav-icon{font-size:1.4rem;line-height:1;}
+
+    /* ── TOAST ── */
+    .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--blue-dark);color:#fff;padding:13px 30px;font-size:.8rem;letter-spacing:.08em;opacity:0;transition:opacity .3s,transform .3s;z-index:99999;pointer-events:none;border-left:3px solid var(--gold);border-radius:10px;}
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+    /* ── RESPONSIVE ── */
+    @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+    @media(max-width:900px){
+      .adm-stats{grid-template-columns:repeat(2,1fr);}
+      #adminApp{padding-bottom:70px;}
+      .adm-body{padding:14px;}
+      .adm-nav{display:none;}
+      .mob-bottom-nav{display:block;}
+    }
+    @media(max-width:600px){
+      .adm-frow{grid-template-columns:1fr;}
+      .adm-stats{grid-template-columns:repeat(2,1fr);gap:10px;}
+    }
+    @media(min-width:901px){
+      .mob-bottom-nav{display:none!important;}
+    }
+    /* Ampel-Farben für Auswertung */
+    .ampel-gruen{color:var(--green);font-weight:700;}
+    .ampel-orange{color:var(--orange);font-weight:700;}
+    .ampel-rot{color:var(--red);font-weight:700;}
+
+    .section-sub{font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mid);margin-bottom:14px;margin-top:24px;padding-bottom:6px;border-bottom:1px solid var(--sand);}
+    .alert-row{background:var(--red-bg);border-left:3px solid var(--red);padding:10px 14px;border-radius:4px;margin-bottom:8px;font-size:.82rem;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+    .info-box{background:#eaf1fb;border-left:3px solid var(--blue);padding:12px 16px;border-radius:4px;font-size:.78rem;color:var(--dark);line-height:1.7;margin-bottom:16px;}
+  </style>
+</head>
+<body>
+
+<!-- ══════════ LOGIN ══════════ -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div style="text-align:center;margin-bottom:16px;">
+      <img src="images/logo.PNG" onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=M&background=2c5282&color=fff&size=90&bold=true&rounded=true'" style="width:80px;height:80px;object-fit:contain;border-radius:50%;background:#fff;padding:4px;"/>
+    </div>
+    <div class="login-logo">مدرسة <span>هانوفر</span></div>
+    <div class="login-sub">Admin · Abwesenheitsverwaltung</div>
+    <div class="login-field"><label>E-Mail</label><input type="email" id="admEmail" autocomplete="username"/></div>
+    <div class="login-field"><label>Passwort</label><input type="password" id="admPw" autocomplete="current-password" onkeydown="if(event.key==='Enter')admLogin()"/></div>
+    <div id="admLoginErr" class="login-err"></div>
+    <button class="login-btn" onclick="admLogin()">Anmelden</button>
+  </div>
+</div>
+
+<!-- ══════════ ADMIN APP ══════════ -->
+<div id="adminApp">
+
+  <!-- Desktop Nav -->
+  <nav class="adm-nav">
+    <div class="adm-logo-wrap">
+      <img src="images/logo.PNG" onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=M&background=2c5282&color=fff&size=90&bold=true&rounded=true'" alt="Logo"/>
+      <div class="adm-logo">مدرسة <span>هانوفر</span></div>
+    </div>
+    <button class="adm-tab on"  onclick="admShowPage('dashboard',this)">📊 Dashboard</button>
+    <button class="adm-tab"     onclick="admShowPage('klassen',this)">🏫 Klassen</button>
+    <button class="adm-tab"     onclick="admShowPage('schueler',this)">👥 Schüler</button>
+    <button class="adm-tab"     onclick="admShowPage('lehrer',this)">👨‍🏫 Lehrer</button>
+    <button class="adm-tab"     onclick="admShowPage('auswertung',this)">📈 Auswertung</button>
+    <button class="adm-tab"     id="admSettingsBtn" onclick="admShowPageFromHeader('einstellungen',this)">⚙️ Einstellungen</button>
+    <div class="adm-nav-actions">
+      <a href="index.html" class="hdr-icon-btn" title="Portal" style="opacity:.75;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </a>
+      <button class="hdr-icon-btn" onclick="admLogout()" title="Abmelden">⏻</button>
+    </div>
+  </nav>
+
+  <div class="adm-body">
+
+    <!-- ═══ DASHBOARD ═══ -->
+    <div class="adm-page on" id="adm-dashboard">
+      <div class="adm-ph">
+        <h2 class="adm-title">Dashboard</h2>
+        <span id="admWelcome" style="font-size:.78rem;color:var(--mid);"></span>
+      </div>
+
+      <div class="adm-stats">
+        <div class="adm-stat blue"><div class="adm-stat-n" id="statSchueler">–</div><div class="adm-stat-l">Schüler gesamt</div></div>
+        <div class="adm-stat"><div class="adm-stat-n" id="statKlassen">–</div><div class="adm-stat-l">Klassen</div></div>
+        <div class="adm-stat green"><div class="adm-stat-n" id="statQuote">–</div><div class="adm-stat-l">Ø Anwesenheitsquote</div></div>
+        <div class="adm-stat red"><div class="adm-stat-n" id="statUnent">–</div><div class="adm-stat-l">Unentschuldigte heute</div></div>
+      </div>
+
+      <!-- Charts -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px;">
+        <div class="info-card">
+          <h4>Anwesenheit nach Klasse</h4>
+          <div class="bar-wrap" id="chartKlassen"></div>
+        </div>
+        <div class="info-card red">
+          <h4>⚠️ Auffällige Schüler (≥3× unentschuldigt)</h4>
+          <div id="alertSchueler"><p style="font-size:.8rem;color:var(--mid);padding:10px 0;">Wird geladen…</p></div>
+        </div>
+      </div>
+
+      <!-- Heute Übersicht -->
+      <div class="section-sub">Heutige Abwesenheiten</div>
+      <div class="adm-table"><table>
+        <thead><tr><th>Schüler</th><th>Klasse</th><th>Status</th><th>Lehrer</th><th>Notiz</th><th>E-Mail</th></tr></thead>
+        <tbody id="dashHeute"><tr><td colspan="6" style="text-align:center;padding:30px;color:var(--mid);">Wird geladen…</td></tr></tbody>
+      </table></div>
+    </div>
+
+    <!-- ═══ KLASSEN ═══ -->
+    <div class="adm-page" id="adm-klassen">
+      <div class="adm-ph">
+        <h2 class="adm-title">Klassen</h2>
+        <button class="adm-btn-d" onclick="openKlasseModal(null)">＋ Klasse hinzufügen</button>
+      </div>
+      <div class="info-box">
+        Hier verwaltest du alle Klassen. Jede Klasse wird einem Lehrer zugewiesen. Schüler kannst du im Tab <strong>Schüler</strong> anlegen und einer Klasse zuordnen.
+      </div>
+      <div id="klassenListe"><p style="color:var(--mid);font-size:.88rem;">Wird geladen…</p></div>
+    </div>
+
+    <!-- ═══ SCHÜLER ═══ -->
+    <div class="adm-page" id="adm-schueler">
+      <div class="adm-ph">
+        <h2 class="adm-title">Schüler</h2>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="adm-btn-d" onclick="openSchuelerModal(null)">＋ Schüler hinzufügen</button>
+          <button class="adm-btn-g" onclick="openImportModal()">⬆ Excel importieren</button>
+          <button class="adm-btn-export" onclick="exportSchuelerCSV()">⬇ CSV export</button>
+        </div>
+      </div>
+      <div class="adm-filterbar">
+        <input class="adm-search" id="schuelerSearch" placeholder="🔍 Name, Klasse …" oninput="renderSchuelerTabelle()"/>
+        <select class="adm-sel" id="schuelerKlasseFilter" onchange="renderSchuelerTabelle()">
+          <option value="">Alle Klassen</option>
+        </select>
+      </div>
+      <div class="adm-table"><table>
+        <thead><tr><th>Name</th><th>Klasse</th><th>Eltern-E-Mail</th><th>Anwes.quote</th><th>Aktionen</th></tr></thead>
+        <tbody id="schuelerTabelle"><tr><td colspan="5" style="text-align:center;padding:30px;color:var(--mid);">Wird geladen…</td></tr></tbody>
+      </table></div>
+    </div>
+
+    <!-- ═══ LEHRER ═══ -->
+    <div class="adm-page" id="adm-lehrer">
+      <div class="adm-ph">
+        <h2 class="adm-title">Lehrer</h2>
+        <button class="adm-btn-d" onclick="openLehrerModal(null)">＋ Lehrer hinzufügen</button>
+      </div>
+      <div class="info-box">
+        Lehrer melden sich in der <strong>abwesenheit.html</strong> mit ihrer E-Mail an. Sie sehen automatisch nur ihre zugewiesene Klasse. Das Passwort wird über Firebase Authentication verwaltet.
+      </div>
+      <div class="adm-table"><table>
+        <thead><tr><th>Name</th><th>E-Mail</th><th>Klasse</th><th>Rolle</th><th>Aktionen</th></tr></thead>
+        <tbody id="lehrerTabelle"><tr><td colspan="5" style="text-align:center;padding:30px;color:var(--mid);">Wird geladen…</td></tr></tbody>
+      </table></div>
+    </div>
+
+    <!-- ═══ AUSWERTUNG ═══ -->
+    <div class="adm-page" id="adm-auswertung">
+      <div class="adm-ph">
+        <h2 class="adm-title">Auswertung</h2>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <select class="adm-sel" id="auswKlasseFilter" onchange="loadAuswertung()">
+            <option value="">Alle Klassen</option>
+          </select>
+          <select class="adm-sel" id="auswZeitraum" onchange="loadAuswertung()">
+            <option value="30">Letzte 30 Tage</option>
+            <option value="90">Letzte 90 Tage</option>
+            <option value="180">Letzte 6 Monate</option>
+            <option value="365">Ganzes Jahr</option>
+          </select>
+          <button class="adm-btn-export" onclick="exportAuswertungCSV()">⬇ CSV exportieren</button>
+        </div>
+      </div>
+
+      <!-- Gesamt Stats -->
+      <div class="adm-stats" id="auswStats">
+        <div class="adm-stat green"><div class="adm-stat-n" id="auswAnw">–</div><div class="adm-stat-l">Anwesend</div></div>
+        <div class="adm-stat red"><div class="adm-stat-n" id="auswAbw">–</div><div class="adm-stat-l">Abwesend</div></div>
+        <div class="adm-stat orange"><div class="adm-stat-n" id="auswUne">–</div><div class="adm-stat-l">Unentschuldigt</div></div>
+        <div class="adm-stat blue"><div class="adm-stat-n" id="auswQuote">–</div><div class="adm-stat-l">Ø Anwesenheitsquote</div></div>
+      </div>
+
+      <!-- Klassen Übersicht -->
+      <div class="section-sub">Anwesenheitsquote nach Klasse</div>
+      <div class="bar-wrap" id="auswKlassenBars" style="margin-bottom:24px;background:#fff;padding:20px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.04);"></div>
+
+      <!-- Pro Schüler -->
+      <div class="section-sub">Detailansicht pro Schüler</div>
+      <div class="adm-table"><table>
+        <thead><tr><th>Schüler</th><th>Klasse</th><th>Anwesend</th><th>Abwesend</th><th>Unentschuldigt</th><th>Quote</th><th>Status</th></tr></thead>
+        <tbody id="auswTabelle"><tr><td colspan="7" style="text-align:center;padding:30px;color:var(--mid);">Wird geladen…</td></tr></tbody>
+      </table></div>
+    </div>
+
+    <!-- ═══ EINSTELLUNGEN ═══ -->
+    <div class="adm-page" id="adm-einstellungen">
+      <div class="adm-ph"><h2 class="adm-title">Einstellungen</h2></div>
+      <div style="background:#fff;padding:28px;box-shadow:0 2px 8px rgba(0,0,0,.04);max-width:560px;border-radius:8px;margin-bottom:20px;">
+        <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:300;color:var(--dark);margin-bottom:6px;">🔑 Einladungscode</h3>
+        <p style="font-size:.76rem;color:var(--mid);margin-bottom:18px;line-height:1.7;">Lehrer brauchen diesen Code um sich in der Abwesenheit-App zu registrieren. Nur wer den Code kennt kann einen Account erstellen.</p>
+        <div class="adm-fg"><label>Einladungscode</label><input id="regCode" placeholder="z.B. Madrassa2025"/></div>
+        <div class="adm-msg" id="regCodeMsg"></div>
+        <button class="adm-btn-d" style="margin-top:8px;" onclick="saveRegCode()">💾 Speichern</button>
+      </div>
+        <p style="font-size:.76rem;color:var(--mid);margin-bottom:18px;line-height:1.7;">Diese Keys werden in Firestore gespeichert und automatisch von der Abwesenheit-App abgerufen.</p>
+      <div style="background:#fff;padding:28px;box-shadow:0 2px 8px rgba(0,0,0,.04);max-width:560px;border-radius:8px;margin-bottom:20px;">
+        <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:300;color:var(--dark);margin-bottom:6px;">📧 EmailJS Konfiguration</h3>
+        <div class="adm-fg"><label>Public Key</label><input id="ejsPublic" placeholder="z.B. reaI6cfXJUE1ZKfY8"/></div>
+        <div class="adm-fg"><label>Service ID</label><input id="ejsService" placeholder="z.B. service_xxx"/></div>
+        <div class="adm-fg"><label>Template ID – Eltern-Benachrichtigung</label><input id="ejsTpl" placeholder="z.B. template_xxx"/>
+          <div style="font-size:.68rem;color:var(--mid);margin-top:3px;line-height:1.6;">Variablen: {{to_email}} {{schueler_name}} {{klasse_name}} {{datum}} {{lehrer_name}} {{status}} {{notiz}}</div>
+        </div>
+        <div class="adm-msg" id="ejsMsg"></div>
+        <button class="adm-btn-d" style="margin-top:8px;" onclick="saveEJS()">💾 Speichern</button>
+      </div>
+    </div>
+
+  </div><!-- /adm-body -->
+
+  <!-- Mobile Bottom Nav -->
+  <nav class="mob-bottom-nav">
+    <div class="mob-bnav-inner">
+      <button class="mob-nav-item on" onclick="mobNav('dashboard',this)"><span class="mob-nav-icon">📊</span>Dashboard</button>
+      <button class="mob-nav-item" onclick="mobNav('klassen',this)"><span class="mob-nav-icon">🏫</span>Klassen</button>
+      <button class="mob-nav-item" onclick="mobNav('schueler',this)"><span class="mob-nav-icon">👥</span>Schüler</button>
+      <button class="mob-nav-item" onclick="mobNav('lehrer',this)"><span class="mob-nav-icon">👨‍🏫</span>Lehrer</button>
+      <button class="mob-nav-item" onclick="mobNav('auswertung',this)"><span class="mob-nav-icon">📈</span>Auswertung</button>
+    </div>
+  </nav>
+
+</div><!-- /adminApp -->
+
+<!-- ══ MODAL: KLASSE ══ -->
+<div class="adm-modal" id="klasseModal">
+  <div class="adm-mbox">
+    <button onclick="closeModal('klasseModal')" style="position:absolute;top:14px;right:16px;background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--mid);">✕</button>
+    <h3 id="klasseModalTitle">Klasse hinzufügen</h3>
+    <input type="hidden" id="klasseEditId"/>
+    <div class="adm-fg"><label>Klassenname</label><input id="klasseName" placeholder="z.B. Klasse 4A"/></div>
+    <div class="adm-fg"><label>Lehrer zuweisen</label>
+      <select id="klasseLehrerSel">
+        <option value="">– Lehrer wählen –</option>
+      </select>
+    </div>
+    <div class="adm-fg"><label>Beschreibung (optional)</label><input id="klasseBeschreibung" placeholder="z.B. Montags 15–17 Uhr"/></div>
+    <div class="adm-msg" id="klasseMsg"></div>
+    <div style="display:flex;gap:10px;margin-top:8px;">
+      <button class="adm-btn-d" style="flex:1;" onclick="saveKlasse()">💾 Speichern</button>
+      <button id="klasseDeleteBtn" class="adm-btn-r" style="display:none;" onclick="deleteKlasse()">🗑️ Löschen</button>
+      <button class="adm-btn-g" onclick="closeModal('klasseModal')">Abbrechen</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: SCHÜLER ══ -->
+<div class="adm-modal" id="schuelerModal">
+  <div class="adm-mbox">
+    <button onclick="closeModal('schuelerModal')" style="position:absolute;top:14px;right:16px;background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--mid);">✕</button>
+    <h3 id="schuelerModalTitle">Schüler hinzufügen</h3>
+    <input type="hidden" id="schuelerEditId"/>
+    <div class="adm-frow">
+      <div class="adm-fg"><label>Vorname</label><input id="schuelerVorname" placeholder="Vorname"/></div>
+      <div class="adm-fg"><label>Nachname</label><input id="schuelerNachname" placeholder="Nachname"/></div>
+    </div>
+    <div class="adm-fg"><label>Klasse</label>
+      <select id="schuelerKlasseSel"><option value="">– Klasse wählen –</option></select>
+    </div>
+    <div class="adm-frow">
+      <div class="adm-fg"><label>Eltern-Name (optional)</label><input id="schuelerElternName" placeholder="Name der Eltern"/></div>
+      <div class="adm-fg"><label>Eltern E-Mail</label><input type="email" id="schuelerElternEmail" placeholder="eltern@example.com"/></div>
+    </div>
+    <div class="adm-fg"><label>Eltern Telefon (optional)</label><input id="schuelerElternTel" placeholder="+49 …"/></div>
+    <div class="adm-fg"><label>Geburtsdatum (optional)</label><input type="date" id="schuelerGeburt"/></div>
+    <div class="adm-fg"><label>Notizen (intern)</label><textarea id="schuelerNotiz" rows="2" placeholder="Interne Anmerkungen…"></textarea></div>
+    <div class="adm-msg" id="schuelerMsg"></div>
+    <div style="display:flex;gap:10px;margin-top:8px;">
+      <button class="adm-btn-d" style="flex:1;" onclick="saveSchueler()">💾 Speichern</button>
+      <button id="schuelerDeleteBtn" class="adm-btn-r" style="display:none;" onclick="deleteSchueler()">🗑️ Löschen</button>
+      <button class="adm-btn-g" onclick="closeModal('schuelerModal')">Abbrechen</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: LEHRER ══ -->
+<div class="adm-modal" id="lehrerModal">
+  <div class="adm-mbox">
+    <button onclick="closeModal('lehrerModal')" style="position:absolute;top:14px;right:16px;background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--mid);">✕</button>
+    <h3 id="lehrerModalTitle">Lehrer hinzufügen</h3>
+    <input type="hidden" id="lehrerEditId"/>
+    <div class="adm-frow">
+      <div class="adm-fg"><label>Vorname</label><input id="lehrerVorname" placeholder="Vorname"/></div>
+      <div class="adm-fg"><label>Nachname</label><input id="lehrerNachname" placeholder="Nachname"/></div>
+    </div>
+    <div class="adm-fg"><label>E-Mail (Firebase Login)</label><input type="email" id="lehrerEmail" placeholder="lehrer@madrassa.de"/></div>
+    <div class="adm-fg"><label>Klasse zuweisen</label>
+      <select id="lehrerKlasseSel"><option value="">– Klasse wählen –</option></select>
+    </div>
+    <div class="adm-fg"><label>Rolle</label>
+      <select id="lehrerRolle">
+        <option value="lehrer">Lehrer</option>
+        <option value="admin">Admin</option>
+      </select>
+    </div>
+    <div class="info-box" style="margin-top:8px;">⚠️ Der Firebase-Account muss separat in der <strong>Firebase Console → Authentication</strong> angelegt werden. Hier wird nur das Profil in Firestore gespeichert.</div>
+    <div class="adm-msg" id="lehrerMsg"></div>
+    <div style="display:flex;gap:10px;margin-top:8px;">
+      <button class="adm-btn-d" style="flex:1;" onclick="saveLehrer()">💾 Speichern</button>
+      <button id="lehrerDeleteBtn" class="adm-btn-r" style="display:none;" onclick="deleteLehrer()">🗑️ Löschen</button>
+      <button class="adm-btn-g" onclick="closeModal('lehrerModal')">Abbrechen</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: IMPORT ══ -->
+<div class="adm-modal" id="importModal">
+  <div class="adm-mbox" style="max-width:640px;">
+    <button onclick="closeModal('importModal')" style="position:absolute;top:14px;right:16px;background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--mid);">✕</button>
+    <h3>Excel / CSV importieren</h3>
+    <div class="info-box">
+      Die Datei muss folgende Spalten enthalten (in beliebiger Reihenfolge):<br/>
+      <strong>name</strong> (Pflicht) · <strong>klasse</strong> · <strong>elternEmail</strong> · <strong>elternName</strong> · <strong>elternTel</strong>
+      <br/><br/>
+      Tipp: Exportiere zuerst die aktuelle Liste und nutze sie als Vorlage.
+    </div>
+    <div class="adm-fg"><label>Klasse (falls nicht in Datei)</label>
+      <select id="importKlasseSel"><option value="">– Klasse wählen –</option></select>
+    </div>
+    <div class="import-drop" id="importDrop" style="position:relative;" onclick="document.getElementById('importFile').click()">
+      <input type="file" id="importFile" accept=".xlsx,.xls,.csv" style="display:none;" onchange="handleImportFile(this)"/>
+      <div class="import-drop-icon">📂</div>
+      <div class="import-drop-text">Excel (.xlsx) oder CSV hier ablegen<br/>oder klicken zum Auswählen</div>
+    </div>
+    <div id="importPreview" style="margin-top:16px;"></div>
+    <div class="adm-msg" id="importMsg"></div>
+    <div style="display:flex;gap:10px;margin-top:12px;">
+      <button class="adm-btn-d" style="flex:1;display:none;" id="importDoBtn" onclick="doImport()">✅ Importieren</button>
+      <button class="adm-btn-g" onclick="closeModal('importModal')">Abbrechen</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="admToast"></div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<!-- SheetJS für Excel-Import -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<script>
+/* ════════════════════════════════
+   STATE
+   ════════════════════════════════ */
+var _auth,_db,_uid,_admProfil;
+var _klassen=[],_schueler=[],_lehrer=[],_abwesenheiten=[];
+var _importRows=[];
+var _currentPage='dashboard';
+
+/* ════════════════════════════════
+   FIREBASE
+   ════════════════════════════════ */
+function initFB(){
+  if(typeof firebase==='undefined')return;
+  var app=firebase.initializeApp({
+    apiKey:'AIzaSyB7fM3rv58LNIDSicQTStcANrZ2rTqCdRQ',
+    authDomain:'madrassa-anwes.firebaseapp.com',
+    projectId:'madrassa-anwes',
+    storageBucket:'madrassa-anwes.firebasestorage.app',
+    messagingSenderId:'553887445745',
+    appId:'1:553887445745:web:a9a131c13dcf57e41e6f50'
+  },'abwesenheit-admin');
+  _auth=app.auth();
+  _db=app.firestore();
+  _auth.onAuthStateChanged(function(u){
+    if(u){_uid=u.uid;loadAdminProfil();}else{showLogin();}
+  });
+}
+if(typeof firebase!=='undefined'){initFB();}else{window.addEventListener('load',initFB);}
+
+function showLogin(){
+  document.getElementById('loginScreen').style.display='flex';
+  document.getElementById('adminApp').style.display='none';
+}
+function showAdmin(){
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('adminApp').style.display='block';
+  loadAllData();
+}
+function admLogin(){
+  var e=document.getElementById('admEmail').value.trim();
+  var p=document.getElementById('admPw').value;
+  var err=document.getElementById('admLoginErr');
+  err.style.display='none';
+  _auth.signInWithEmailAndPassword(e,p).catch(function(x){
+    err.textContent=x.message;err.style.display='block';
+  });
+}
+function admLogout(){if(_auth)_auth.signOut();}
+
+function loadAdminProfil(){
+  // Check admins collection
+  _db.collection('admins').doc(_uid).get().then(function(s){
+    if(!s.exists||s.data().role!=='admin'){
+      admLogout();return;
+    }
+    _admProfil=s.data();
+    var nm=(_admProfil.vorname||'')+' '+(_admProfil.nachname||'');
+    document.getElementById('admWelcome').textContent='Willkommen'+(nm.trim()?' , '+nm.trim():'');
+    showAdmin();
+  }).catch(function(){admLogout();});
+}
+
+/* ════════════════════════════════
+   NAVIGATION
+   ════════════════════════════════ */
+function admShowPage(name,btn){
+  document.querySelectorAll('.adm-page').forEach(function(p){p.classList.remove('on');});
+  document.querySelectorAll('.adm-tab').forEach(function(t){t.classList.remove('on');});
+  document.getElementById('adm-'+name).classList.add('on');
+  if(btn)btn.classList.add('on');
+  _currentPage=name;
+  var settBtn=document.getElementById('admSettingsBtn');
+  if(settBtn)settBtn.classList.toggle('active-page',name==='einstellungen');
+  if(name==='dashboard')loadDashboard();
+  if(name==='klassen')renderKlassen();
+  if(name==='schueler')renderSchuelerTabelle();
+  if(name==='lehrer')renderLehrerTabelle();
+  if(name==='auswertung')loadAuswertung();
+  if(name==='einstellungen')loadEJS();
+}
+function admShowPageFromHeader(name,btn){
+  admShowPage(name,btn);
+  document.querySelectorAll('.mob-nav-item').forEach(function(b){b.classList.remove('on');});
+}
+function mobNav(name,btn){
+  admShowPage(name,null);
+  document.querySelectorAll('.mob-nav-item').forEach(function(b){b.classList.remove('on');});
+  btn.classList.add('on');
+}
+
+/* ════════════════════════════════
+   ALLE DATEN LADEN
+   ════════════════════════════════ */
+function loadAllData(){
+  // Klassen
+  _db.collection('klassen').orderBy('name').get().then(function(snap){
+    _klassen=[];
+    snap.forEach(function(d){_klassen.push(Object.assign({id:d.id},d.data()));});
+    populateKlassenSelects();
+    loadDashboard();
+  });
+  // Schüler
+  _db.collection('schueler').where('aktiv','!=',false).orderBy('aktiv').orderBy('name').get().then(function(snap){
+    _schueler=[];
+    snap.forEach(function(d){_schueler.push(Object.assign({id:d.id},d.data()));});
+  }).catch(function(){
+    _db.collection('schueler').orderBy('name').get().then(function(snap){
+      _schueler=[];snap.forEach(function(d){_schueler.push(Object.assign({id:d.id},d.data()));});
+    });
+  });
+  // Lehrer
+  _db.collection('mitarbeiter').get().then(function(snap){
+    _lehrer=[];
+    snap.forEach(function(d){_lehrer.push(Object.assign({id:d.id},d.data()));});
+    populateLehrerSelects();
+  });
+  // Abwesenheiten (letzte 90 Tage)
+  var d90=new Date();d90.setDate(d90.getDate()-90);
+  var ds90=d90.getFullYear()+'-'+String(d90.getMonth()+1).padStart(2,'0')+'-'+String(d90.getDate()).padStart(2,'0');
+  _db.collection('abwesenheit').where('datum','>=',ds90).get().then(function(snap){
+    _abwesenheiten=[];
+    snap.forEach(function(d){_abwesenheiten.push(Object.assign({id:d.id},d.data()));});
+  });
+}
+
+/* ════════════════════════════════
+   SELECTS BEFÜLLEN
+   ════════════════════════════════ */
+function populateKlassenSelects(){
+  var ids=['klasseLehrerSel','schuelerKlasseSel','lehrerKlasseSel','schuelerKlasseFilter','importKlasseSel','auswKlasseFilter'];
+  // exclude non-selects
+  ['schuelerKlasseFilter','auswKlasseFilter'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(!el)return;
+    el.innerHTML='<option value="">Alle Klassen</option>';
+    _klassen.forEach(function(k){
+      var o=document.createElement('option');o.value=k.id;o.textContent=k.name;el.appendChild(o);
+    });
+  });
+  ['schuelerKlasseSel','lehrerKlasseSel','importKlasseSel'].forEach(function(id){
+    var el=document.getElementById(id);if(!el)return;
+    el.innerHTML='<option value="">– Klasse wählen –</option>';
+    _klassen.forEach(function(k){
+      var o=document.createElement('option');o.value=k.id;o.textContent=k.name;el.appendChild(o);
+    });
+  });
+  // klasseLehrerSel - lehrer options
+  var lSel=document.getElementById('klasseLehrerSel');
+  if(lSel){
+    lSel.innerHTML='<option value="">– Lehrer wählen –</option>';
+    _lehrer.forEach(function(l){
+      var o=document.createElement('option');o.value=l.id;o.textContent=(l.vorname||'')+' '+(l.nachname||'');lSel.appendChild(o);
+    });
+  }
+}
+function populateLehrerSelects(){
+  populateKlassenSelects();
+  var lSel=document.getElementById('klasseLehrerSel');
+  if(lSel){
+    lSel.innerHTML='<option value="">– Lehrer wählen –</option>';
+    _lehrer.forEach(function(l){
+      var o=document.createElement('option');o.value=l.id;o.textContent=(l.vorname||'')+' '+(l.nachname||'');lSel.appendChild(o);
+    });
+  }
+}
+
+/* ════════════════════════════════
+   DASHBOARD
+   ════════════════════════════════ */
+function loadDashboard(){
+  document.getElementById('statSchueler').textContent=_schueler.length||'–';
+  document.getElementById('statKlassen').textContent=_klassen.length||'–';
+
+  // Heute
+  var heute=today();
+  var heuteEintraege=_abwesenheiten.filter(function(x){return x.datum===heute;});
+  var unentHeute=heuteEintraege.filter(function(x){return x.status==='unentschuldigt';}).length;
+  document.getElementById('statUnent').textContent=unentHeute;
+
+  // Gesamt-Quote
+  var gesamt=_abwesenheiten.length;
+  var anwGes=_abwesenheiten.filter(function(x){return x.status==='anwesend';}).length;
+  var quote=gesamt>0?Math.round(anwGes/gesamt*100):0;
+  document.getElementById('statQuote').textContent=quote+'%';
+
+  // Chart: Anwesenheit nach Klasse
+  var klasseStats={};
+  _abwesenheiten.forEach(function(x){
+    if(!klasseStats[x.klasseId])klasseStats[x.klasseId]={name:x.klasseName||x.klasseId,anw:0,ges:0};
+    klasseStats[x.klasseId].ges++;
+    if(x.status==='anwesend')klasseStats[x.klasseId].anw++;
+  });
+  var kArr=Object.values(klasseStats);
+  var maxAnw=Math.max.apply(null,kArr.map(function(k){return k.ges||1;}));
+  var chartHtml='';
+  kArr.forEach(function(k){
+    var q=k.ges>0?Math.round(k.anw/k.ges*100):0;
+    chartHtml+='<div class="bar-row-c"><span class="bar-lbl">'+k.name+'</span><div class="bar-track"><div class="bar-fill '+(q>=80?'green':q>=60?'orange':'red')+'" style="width:'+q+'%"></div></div><span class="bar-val">'+q+'%</span></div>';
+  });
+  document.getElementById('chartKlassen').innerHTML=chartHtml||'<p style="font-size:.8rem;color:var(--mid);">Noch keine Daten.</p>';
+
+  // Auffällige Schüler (≥3x unentschuldigt)
+  var unentCount={};
+  _abwesenheiten.filter(function(x){return x.status==='unentschuldigt';}).forEach(function(x){
+    unentCount[x.schuelerId]=(unentCount[x.schuelerId]||{name:x.schueleName,klasse:x.klasseName,count:0});
+    unentCount[x.schuelerId].count++;
+  });
+  var alertList=Object.values(unentCount).filter(function(x){return x.count>=3;}).sort(function(a,b){return b.count-a.count;});
+  var alertHtml='';
+  alertList.forEach(function(s){
+    alertHtml+='<div class="alert-row"><span>'+s.name+' <small>('+s.klasse+')</small></span><strong class="ampel-rot">'+s.count+'×</strong></div>';
+  });
+  document.getElementById('alertSchueler').innerHTML=alertHtml||'<p style="font-size:.8rem;color:var(--mid);padding:10px 0;">✅ Keine auffälligen Schüler.</p>';
+
+  // Heute Tabelle
+  var hHtml='';
+  if(!heuteEintraege.length){
+    hHtml='<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--mid);">Noch keine Einträge für heute.</td></tr>';
+  } else {
+    heuteEintraege.forEach(function(x){
+      var badgeCls=x.status==='anwesend'?'badge-green':x.status==='abwesend'?'badge-red':'badge-orange';
+      hHtml+='<tr><td><strong>'+x.schueleName+'</strong></td><td>'+(x.klasseName||'')+'</td>';
+      hHtml+='<td><span class="adm-badge '+badgeCls+'">'+statusText(x.status)+'</span></td>';
+      hHtml+='<td>'+(x.lehrerName||'–')+'</td><td>'+(x.notiz||'–')+'</td>';
+      hHtml+='<td>'+(x.emailGesendet?'✅':'–')+'</td></tr>';
+    });
+  }
+  document.getElementById('dashHeute').innerHTML=hHtml;
+}
+
+/* ════════════════════════════════
+   KLASSEN
+   ════════════════════════════════ */
+function renderKlassen(){
+  var html='';
+  if(!_klassen.length){
+    html='<p style="color:var(--mid);font-size:.88rem;">Noch keine Klassen angelegt. Klicke auf „+ Klasse hinzufügen".</p>';
+  }
+  _klassen.forEach(function(k){
+    var lehrer=_lehrer.find(function(l){return l.id===k.lehrerId;});
+    var lehrerName=lehrer?(lehrer.vorname||'')+' '+(lehrer.nachname||''):'– kein Lehrer –';
+    var schuelerCount=_schueler.filter(function(s){return s.klasseId===k.id;}).length;
+    html+='<div class="klasse-karte">';
+    html+='<div class="kk-head"><div class="kk-name">🏫 '+k.name+'</div>';
+    html+='<div style="display:flex;gap:8px;align-items:center;">';
+    html+='<span class="kk-schueler-count">👥 '+schuelerCount+' Schüler</span>';
+    html+='<button class="adm-btn-d" style="padding:6px 14px;font-size:.65rem;" onclick="openKlasseModal(\''+k.id+'\')">✏️ Bearbeiten</button>';
+    html+='</div></div>';
+    html+='<div class="kk-meta">👨‍🏫 Lehrer: '+lehrerName+(k.beschreibung?' · '+k.beschreibung:'')+'</div>';
+    // Schüler-Liste der Klasse
+    var sList=_schueler.filter(function(s){return s.klasseId===k.id;});
+    if(sList.length){
+      html+='<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;">';
+      sList.forEach(function(s){html+='<span style="background:var(--beige);border-radius:20px;padding:3px 10px;font-size:.75rem;">'+s.name+'</span>';});
+      html+='</div>';
+    }
+    html+='</div>';
+  });
+  document.getElementById('klassenListe').innerHTML=html;
+}
+
+function openKlasseModal(id){
+  document.getElementById('klasseMsg').className='adm-msg';
+  document.getElementById('klasseMsg').style.display='none';
+  var lSel=document.getElementById('klasseLehrerSel');
+  lSel.innerHTML='<option value="">Wird geladen…</option>';
+  _db.collection('mitarbeiter').get().then(function(snap){
+    _lehrer=[];snap.forEach(function(d){_lehrer.push(Object.assign({id:d.id},d.data()));});
+    lSel.innerHTML='<option value="">– Lehrer wählen –</option>';
+    _lehrer.forEach(function(l){var o=document.createElement('option');o.value=l.id;o.textContent=(l.vorname||'')+' '+(l.nachname||'');lSel.appendChild(o);});
+    if(id){
+      var k=_klassen.find(function(x){return x.id===id;});
+      if(k)lSel.value=k.lehrerId||'';
+    }
+  });
+  if(id){
+    var k=_klassen.find(function(x){return x.id===id;});
+    document.getElementById('klasseModalTitle').textContent='Klasse bearbeiten';
+    document.getElementById('klasseEditId').value=id;
+    document.getElementById('klasseName').value=k?k.name||'':'';
+    document.getElementById('klasseBeschreibung').value=k?k.beschreibung||'':'';
+    document.getElementById('klasseDeleteBtn').style.display='inline-block';
+  } else {
+    document.getElementById('klasseModalTitle').textContent='Klasse hinzufügen';
+    document.getElementById('klasseEditId').value='';
+    document.getElementById('klasseName').value='';
+    document.getElementById('klasseBeschreibung').value='';
+    document.getElementById('klasseDeleteBtn').style.display='none';
+  }
+  document.getElementById('klasseModal').classList.add('on');
+}
+function saveKlasse(){
+  var id=document.getElementById('klasseEditId').value;
+  var name=document.getElementById('klasseName').value.trim();
+  var lehrerId=document.getElementById('klasseLehrerSel').value;
+  var beschreibung=document.getElementById('klasseBeschreibung').value.trim();
+  if(!name){showModalMsg('klasseMsg','Bitte Klassenname eingeben.','err');return;}
+  var lehrer=_lehrer.find(function(l){return l.id===lehrerId;});
+  var lehrerName=lehrer?(lehrer.vorname||'')+' '+(lehrer.nachname||''):'';
+  var data={name:name,lehrerId:lehrerId||'',lehrerName:lehrerName.trim(),beschreibung:beschreibung,aktualisiert:firebase.firestore.FieldValue.serverTimestamp()};
+  var ref=id?_db.collection('klassen').doc(id):_db.collection('klassen').doc();
+  var newId=ref.id;
+  var p=id?ref.update(data):ref.set(data);
+  p.then(function(){
+    closeModal('klasseModal');toast('✅ Klasse gespeichert!');
+    if(lehrerId){
+      // Lehrer-Profil updaten mit korrekter Klassen-ID
+      _db.collection('mitarbeiter').doc(lehrerId).update({klasseId:newId,klasseName:name});
+    }
+    loadAllData();setTimeout(function(){renderKlassen();},800);
+  }).catch(function(e){showModalMsg('klasseMsg',e.message,'err');});
+}
+function deleteKlasse(){
+  var id=document.getElementById('klasseEditId').value;
+  if(!id||!confirm('Klasse wirklich löschen?'))return;
+  _db.collection('klassen').doc(id).delete().then(function(){
+    closeModal('klasseModal');toast('🗑️ Klasse gelöscht.');
+    loadAllData();setTimeout(function(){renderKlassen();},800);
+  });
+}
+
+/* ════════════════════════════════
+   SCHÜLER
+   ════════════════════════════════ */
+function renderSchuelerTabelle(){
+  var tbody=document.getElementById('schuelerTabelle');
+  var search=(document.getElementById('schuelerSearch').value||'').toLowerCase();
+  var klasseF=document.getElementById('schuelerKlasseFilter').value;
+  // Immer frisch aus Firestore laden
+  _db.collection('schueler').orderBy('name').get().then(function(snap){
+    _schueler=[];
+    snap.forEach(function(d){_schueler.push(Object.assign({id:d.id},d.data()));});
+    var filtered=_schueler.filter(function(s){
+      var nm=(s.name||'').toLowerCase();
+      var kn=(s.klasseName||'').toLowerCase();
+      if(search&&nm.indexOf(search)===-1&&kn.indexOf(search)===-1)return false;
+      if(klasseF&&s.klasseId!==klasseF)return false;
+      return true;
+    });
+    if(!filtered.length){
+      tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--mid);">Keine Schüler gefunden.</td></tr>';return;
+    }
+    var quoten={};
+    _abwesenheiten.forEach(function(x){
+      if(!quoten[x.schuelerId])quoten[x.schuelerId]={a:0,g:0};
+      quoten[x.schuelerId].g++;
+      if(x.status==='anwesend')quoten[x.schuelerId].a++;
+    });
+    var html='';
+    filtered.forEach(function(s){
+      var q=quoten[s.id];
+      var pct=q&&q.g>0?Math.round(q.a/q.g*100):null;
+      var pctHtml=pct!==null?
+        '<div class="quote-cell"><div class="quote-mini-bar"><div class="quote-mini-fill" style="width:'+pct+'%;background:'+(pct>=80?'var(--green)':pct>=60?'var(--orange)':'var(--red)')+'"></div></div><span class="quote-pct '+(pct>=80?'ampel-gruen':pct>=60?'ampel-orange':'ampel-rot')+'">'+pct+'%</span></div>'
+        :'<span style="color:var(--mid);font-size:.75rem;">–</span>';
+      html+='<tr>';
+      html+='<td><strong>'+s.name+'</strong></td>';
+      html+='<td>'+(s.klasseName||'–')+'</td>';
+      html+='<td>'+(s.elternEmail?'<a href="mailto:'+s.elternEmail+'" style="color:var(--blue);">'+s.elternEmail+'</a>':'–')+'</td>';
+      html+='<td>'+pctHtml+'</td>';
+      html+='<td><button class="adm-btn-d" style="padding:5px 12px;font-size:.65rem;" onclick="openSchuelerModal(\''+s.id+'\')">✏️</button></td>';
+      html+='</tr>';
+    });
+    tbody.innerHTML=html;
+  }).catch(function(e){
+    tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--red);">Fehler: '+e.message+'</td></tr>';
+  });
+}
+function openSchuelerModal(id){
+  document.getElementById('schuelerMsg').className='adm-msg';
+  document.getElementById('schuelerMsg').style.display='none';
+  var kSel=document.getElementById('schuelerKlasseSel');
+  kSel.innerHTML='<option value="">Wird geladen…</option>';
+  _db.collection('klassen').orderBy('name').get().then(function(snap){
+    _klassen=[];snap.forEach(function(d){_klassen.push(Object.assign({id:d.id},d.data()));});
+    kSel.innerHTML='<option value="">– Klasse wählen –</option>';
+    _klassen.forEach(function(k){var o=document.createElement('option');o.value=k.id;o.textContent=k.name;kSel.appendChild(o);});
+    if(id){
+      var s=_schueler.find(function(x){return x.id===id;});
+      if(s)kSel.value=s.klasseId||'';
+    }
+  });
+  if(id){
+    var s=_schueler.find(function(x){return x.id===id;});
+    document.getElementById('schuelerModalTitle').textContent='Schüler bearbeiten';
+    document.getElementById('schuelerEditId').value=id;
+    var parts=(s.name||'').split(' ');
+    document.getElementById('schuelerVorname').value=parts[0]||'';
+    document.getElementById('schuelerNachname').value=parts.slice(1).join(' ')||'';
+    document.getElementById('schuelerKlasseSel').value=s.klasseId||'';
+    document.getElementById('schuelerElternName').value=s.elternName||'';
+    document.getElementById('schuelerElternEmail').value=s.elternEmail||'';
+    document.getElementById('schuelerElternTel').value=s.elternTel||'';
+    document.getElementById('schuelerGeburt').value=s.geburt||'';
+    document.getElementById('schuelerNotiz').value=s.notiz||'';
+    document.getElementById('schuelerDeleteBtn').style.display='inline-block';
+  } else {
+    document.getElementById('schuelerModalTitle').textContent='Schüler hinzufügen';
+    document.getElementById('schuelerEditId').value='';
+    ['schuelerVorname','schuelerNachname','schuelerElternName','schuelerElternEmail','schuelerElternTel','schuelerGeburt','schuelerNotiz'].forEach(function(id){document.getElementById(id).value='';});
+    document.getElementById('schuelerKlasseSel').value='';
+    document.getElementById('schuelerDeleteBtn').style.display='none';
+  }
+  document.getElementById('schuelerModal').classList.add('on');
+}
+function saveSchueler(){
+  var id=document.getElementById('schuelerEditId').value;
+  var vn=document.getElementById('schuelerVorname').value.trim();
+  var nn=document.getElementById('schuelerNachname').value.trim();
+  var name=(vn+' '+nn).trim();
+  var klasseId=document.getElementById('schuelerKlasseSel').value;
+  if(!name){showModalMsg('schuelerMsg','Bitte Name eingeben.','err');return;}
+  var klasse=_klassen.find(function(k){return k.id===klasseId;});
+  var data={
+    name:name,klasseId:klasseId||'',klasseName:klasse?klasse.name:'',
+    elternName:document.getElementById('schuelerElternName').value.trim(),
+    elternEmail:document.getElementById('schuelerElternEmail').value.trim(),
+    elternTel:document.getElementById('schuelerElternTel').value.trim(),
+    geburt:document.getElementById('schuelerGeburt').value,
+    notiz:document.getElementById('schuelerNotiz').value.trim(),
+    aktiv:true,aktualisiert:firebase.firestore.FieldValue.serverTimestamp()
+  };
+  var p=id?_db.collection('schueler').doc(id).update(data):_db.collection('schueler').doc().set(data);
+  p.then(function(){
+    closeModal('schuelerModal');toast('✅ Schüler gespeichert!');
+    loadAllData();setTimeout(function(){renderSchuelerTabelle();},800);
+  }).catch(function(e){showModalMsg('schuelerMsg',e.message,'err');});
+}
+function deleteSchueler(){
+  var id=document.getElementById('schuelerEditId').value;
+  if(!id||!confirm('Schüler wirklich löschen?'))return;
+  _db.collection('schueler').doc(id).delete().then(function(){
+    closeModal('schuelerModal');toast('🗑️ Schüler gelöscht.');
+    loadAllData();setTimeout(function(){renderSchuelerTabelle();},800);
+  });
+}
+function exportSchuelerCSV(){
+  var rows=[['Name','Klasse','Eltern-Email','Eltern-Name','Eltern-Tel']];
+  _schueler.forEach(function(s){rows.push([s.name||'',s.klasseName||'',s.elternEmail||'',s.elternName||'',s.elternTel||'']);});
+  downloadCSV(rows,'schueler_export.csv');
+}
+
+/* ════════════════════════════════
+   LEHRER
+   ════════════════════════════════ */
+function renderLehrerTabelle(){
+  var tbody=document.getElementById('lehrerTabelle');
+  tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--mid);">Wird geladen…</td></tr>';
+  _db.collection('mitarbeiter').get().then(function(snap){
+    _lehrer=[];
+    snap.forEach(function(d){_lehrer.push(Object.assign({id:d.id},d.data()));});
+    if(!_lehrer.length){
+      tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--mid);">Noch keine Lehrer registriert.</td></tr>';
+      return;
+    }
+    var html='';
+    _lehrer.forEach(function(l){
+      var roleBadge=l.rolle==='admin'||l.admin?'<span class="adm-badge badge-blue">Admin</span>':'<span class="adm-badge badge-sand">Lehrer</span>';
+      var klasse=l.klasseName?'<span class="adm-badge badge-green">'+l.klasseName+'</span>':'<span style="color:var(--mid);font-size:.75rem;">– keine Klasse –</span>';
+      html+='<tr>';
+      html+='<td><strong>'+(l.vorname||'')+' '+(l.nachname||'')+'</strong></td>';
+      html+='<td>'+(l.email||'–')+'</td>';
+      html+='<td>'+klasse+'</td>';
+      html+='<td>'+roleBadge+'</td>';
+      html+='<td><button class="adm-btn-d" style="padding:5px 12px;font-size:.65rem;" onclick="openLehrerModal(\''+l.id+'\')">✏️ Bearbeiten</button></td>';
+      html+='</tr>';
+    });
+    tbody.innerHTML=html;
+  }).catch(function(e){
+    tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--red);">Fehler: '+e.message+'</td></tr>';
+  });
+}
+function openLehrerModal(id){
+  document.getElementById('lehrerMsg').className='adm-msg';
+  document.getElementById('lehrerMsg').style.display='none';
+  var kSel=document.getElementById('lehrerKlasseSel');
+  kSel.innerHTML='<option value="">Wird geladen…</option>';
+  // Klassen frisch laden
+  _db.collection('klassen').orderBy('name').get().then(function(snap){
+    _klassen=[];snap.forEach(function(d){_klassen.push(Object.assign({id:d.id},d.data()));});
+    kSel.innerHTML='<option value="">– Klasse wählen –</option>';
+    _klassen.forEach(function(k){var o=document.createElement('option');o.value=k.id;o.textContent=k.name;kSel.appendChild(o);});
+    if(id){kSel.value=_lehrer.find(function(x){return x.id===id;})||{}&&document.getElementById('lehrerKlasseSel').value;}
+  });
+  if(id){
+    var l=_lehrer.find(function(x){return x.id===id;});
+    document.getElementById('lehrerModalTitle').textContent='Lehrer bearbeiten';
+    document.getElementById('lehrerEditId').value=id;
+    document.getElementById('lehrerVorname').value=l.vorname||'';
+    document.getElementById('lehrerNachname').value=l.nachname||'';
+    document.getElementById('lehrerEmail').value=l.email||'';
+    document.getElementById('lehrerKlasseSel').value=l.klasseId||'';
+    document.getElementById('lehrerRolle').value=(l.rolle==='admin'||l.admin)?'admin':'lehrer';
+    document.getElementById('lehrerDeleteBtn').style.display='inline-block';
+  } else {
+    document.getElementById('lehrerModalTitle').textContent='Lehrer hinzufügen';
+    document.getElementById('lehrerEditId').value='';
+    ['lehrerVorname','lehrerNachname','lehrerEmail'].forEach(function(i){document.getElementById(i).value='';});
+    document.getElementById('lehrerKlasseSel').value='';
+    document.getElementById('lehrerRolle').value='lehrer';
+    document.getElementById('lehrerDeleteBtn').style.display='none';
+  }
+  document.getElementById('lehrerModal').classList.add('on');
+}
+function saveLehrer(){
+  var id=document.getElementById('lehrerEditId').value;
+  var vn=document.getElementById('lehrerVorname').value.trim();
+  var nn=document.getElementById('lehrerNachname').value.trim();
+  var email=document.getElementById('lehrerEmail').value.trim();
+  var klasseId=document.getElementById('lehrerKlasseSel').value;
+  var rolle=document.getElementById('lehrerRolle').value;
+  if(!vn||!email){showModalMsg('lehrerMsg','Bitte Vorname und E-Mail ausfüllen.','err');return;}
+  var klasse=_klassen.find(function(k){return k.id===klasseId;});
+  var data={
+    vorname:vn,nachname:nn,email:email,
+    klasseId:klasseId||'',klasseName:klasse?klasse.name:'',
+    rolle:rolle,admin:rolle==='admin',
+    aktualisiert:firebase.firestore.FieldValue.serverTimestamp()
+  };
+  var p=id?_db.collection('mitarbeiter').doc(id).update(data):_db.collection('mitarbeiter').doc().set(data);
+  p.then(function(){
+    closeModal('lehrerModal');toast('✅ Lehrer gespeichert!');
+    loadAllData();setTimeout(function(){renderLehrerTabelle();},800);
+  }).catch(function(e){showModalMsg('lehrerMsg',e.message,'err');});
+}
+function deleteLehrer(){
+  var id=document.getElementById('lehrerEditId').value;
+  if(!id||!confirm('Lehrer-Profil wirklich löschen?'))return;
+  _db.collection('mitarbeiter').doc(id).delete().then(function(){
+    closeModal('lehrerModal');toast('🗑️ Lehrer gelöscht.');
+    loadAllData();setTimeout(function(){renderLehrerTabelle();},800);
+  });
+}
+
+/* ════════════════════════════════
+   EXCEL IMPORT
+   ════════════════════════════════ */
+function openImportModal(){
+  document.getElementById('importPreview').innerHTML='';
+  document.getElementById('importMsg').className='adm-msg';
+  document.getElementById('importMsg').style.display='none';
+  document.getElementById('importDoBtn').style.display='none';
+  document.getElementById('importFile').value='';
+  _importRows=[];
+  // Populate klasse select
+  var sel=document.getElementById('importKlasseSel');
+  sel.innerHTML='<option value="">– Klasse wählen –</option>';
+  _klassen.forEach(function(k){var o=document.createElement('option');o.value=k.id;o.textContent=k.name;sel.appendChild(o);});
+  document.getElementById('importModal').classList.add('on');
+}
+function handleImportFile(inp){
+  var file=inp.files[0];if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var data=new Uint8Array(e.target.result);
+    var wb=XLSX.read(data,{type:'array'});
+    var ws=wb.Sheets[wb.SheetNames[0]];
+    var rows=XLSX.utils.sheet_to_json(ws,{defval:''});
+    _importRows=rows;
+    // Preview
+    if(!rows.length){showModalMsg('importMsg','Keine Daten in der Datei gefunden.','err');return;}
+    var html='<p style="font-size:.78rem;color:var(--mid);margin-bottom:8px;">'+rows.length+' Zeilen gefunden – Vorschau (erste 5):</p>';
+    html+='<div class="adm-table" style="max-height:200px;overflow-y:auto;"><table><thead><tr>';
+    Object.keys(rows[0]).forEach(function(k){html+='<th>'+k+'</th>';});
+    html+='</tr></thead><tbody>';
+    rows.slice(0,5).forEach(function(r){
+      html+='<tr>';Object.values(r).forEach(function(v){html+='<td>'+v+'</td>';});html+='</tr>';
+    });
+    html+='</tbody></table></div>';
+    document.getElementById('importPreview').innerHTML=html;
+    document.getElementById('importDoBtn').style.display='inline-block';
+  };
+  reader.readAsArrayBuffer(file);
+}
+function doImport(){
+  if(!_importRows.length)return;
+  var klasseId=document.getElementById('importKlasseSel').value;
+  var klasse=_klassen.find(function(k){return k.id===klasseId;});
+  var batch=_db.batch();var count=0;
+  _importRows.forEach(function(row){
+    var name=(row['name']||row['Name']||row['NAME']||'').trim();
+    if(!name)return;
+    var kId=klasseId||'';
+    var kName=klasse?klasse.name:'';
+    // Falls Klasse in der Zeile steht
+    var rowKlasse=(row['klasse']||row['Klasse']||'').trim();
+    if(rowKlasse&&!klasseId){
+      var found=_klassen.find(function(k){return k.name.toLowerCase()===rowKlasse.toLowerCase();});
+      if(found){kId=found.id;kName=found.name;}
+    }
+    var ref=_db.collection('schueler').doc();
+    batch.set(ref,{
+      name:name,klasseId:kId,klasseName:kName,
+      elternEmail:(row['elternEmail']||row['Email']||row['email']||'').trim(),
+      elternName:(row['elternName']||'').trim(),
+      elternTel:(row['elternTel']||row['Tel']||'').trim(),
+      aktiv:true,aktualisiert:firebase.firestore.FieldValue.serverTimestamp()
+    });
+    count++;
+  });
+  batch.commit().then(function(){
+    closeModal('importModal');
+    toast('✅ '+count+' Schüler importiert!');
+    loadAllData();setTimeout(function(){renderSchuelerTabelle();},800);
+  }).catch(function(e){showModalMsg('importMsg',e.message,'err');});
+}
+
+/* ════════════════════════════════
+   AUSWERTUNG
+   ════════════════════════════════ */
+function loadAuswertung(){
+  var klasseF=document.getElementById('auswKlasseFilter').value;
+  var tage=parseInt(document.getElementById('auswZeitraum').value)||30;
+  var cutoff=new Date();cutoff.setDate(cutoff.getDate()-tage);
+  var cutoffStr=cutoff.getFullYear()+'-'+String(cutoff.getMonth()+1).padStart(2,'0')+'-'+String(cutoff.getDate()).padStart(2,'0');
+
+  var filtered=_abwesenheiten.filter(function(x){
+    if(x.datum<cutoffStr)return false;
+    if(klasseF&&x.klasseId!==klasseF)return false;
+    return true;
+  });
+
+  var gA=filtered.filter(function(x){return x.status==='anwesend';}).length;
+  var gB=filtered.filter(function(x){return x.status==='abwesend';}).length;
+  var gU=filtered.filter(function(x){return x.status==='unentschuldigt';}).length;
+  var gG=filtered.length||1;
+  document.getElementById('auswAnw').textContent=gA;
+  document.getElementById('auswAbw').textContent=gB;
+  document.getElementById('auswUne').textContent=gU;
+  document.getElementById('auswQuote').textContent=Math.round(gA/gG*100)+'%';
+
+  // Klassen-Bars
+  var kStats={};
+  filtered.forEach(function(x){
+    if(!kStats[x.klasseId])kStats[x.klasseId]={name:x.klasseName||x.klasseId,a:0,g:0};
+    kStats[x.klasseId].g++;
+    if(x.status==='anwesend')kStats[x.klasseId].a++;
+  });
+  var kArr=Object.values(kStats);
+  var barsHtml='';
+  kArr.sort(function(a,b){return b.g-a.g;}).forEach(function(k){
+    var q=k.g>0?Math.round(k.a/k.g*100):0;
+    var col=q>=80?'green':q>=60?'orange':'red';
+    barsHtml+='<div class="bar-row-c" style="margin-bottom:10px;"><span class="bar-lbl">'+k.name+'</span><div class="bar-track" style="flex:1;height:12px;"><div class="bar-fill '+col+'" style="width:'+q+'%"></div></div><span class="bar-val" style="'+(q>=80?'color:var(--green)':q>=60?'color:var(--orange)':'color:var(--red)')+'">'+q+'%</span></div>';
+  });
+  document.getElementById('auswKlassenBars').innerHTML=barsHtml||'<p style="color:var(--mid);font-size:.82rem;">Keine Daten für diesen Zeitraum.</p>';
+
+  // Pro Schüler
+  var sStats={};
+  filtered.forEach(function(x){
+    if(!sStats[x.schuelerId])sStats[x.schuelerId]={name:x.schueleName,klasse:x.klasseName||'',a:0,b:0,u:0};
+    if(x.status==='anwesend')sStats[x.schuelerId].a++;
+    else if(x.status==='abwesend')sStats[x.schuelerId].b++;
+    else if(x.status==='unentschuldigt')sStats[x.schuelerId].u++;
+  });
+  var sArr=Object.values(sStats).sort(function(a,b){
+    var qa=(a.a+a.b+a.u)>0?a.a/(a.a+a.b+a.u):1;
+    var qb=(b.a+b.b+b.u)>0?b.a/(b.a+b.b+b.u):1;
+    return qa-qb; // schlechteste zuerst
+  });
+  var tHtml='';
+  if(!sArr.length){tHtml='<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--mid);">Keine Daten für diesen Zeitraum.</td></tr>';}
+  sArr.forEach(function(s){
+    var g=s.a+s.b+s.u||1;
+    var q=Math.round(s.a/g*100);
+    var qClass=q>=80?'ampel-gruen':q>=60?'ampel-orange':'ampel-rot';
+    var statusBadge=q>=80?'<span class="adm-badge badge-green">✓ Gut</span>':q>=60?'<span class="adm-badge badge-orange">⚠ Mittel</span>':'<span class="adm-badge badge-red">❌ Kritisch</span>';
+    tHtml+='<tr>';
+    tHtml+='<td><strong>'+s.name+'</strong></td>';
+    tHtml+='<td>'+s.klasse+'</td>';
+    tHtml+='<td style="color:var(--green);">'+s.a+'</td>';
+    tHtml+='<td style="color:var(--red);">'+s.b+'</td>';
+    tHtml+='<td style="color:var(--orange);">'+s.u+'</td>';
+    tHtml+='<td class="'+qClass+'">'+q+'%</td>';
+    tHtml+='<td>'+statusBadge+'</td>';
+    tHtml+='</tr>';
+  });
+  document.getElementById('auswTabelle').innerHTML=tHtml;
+  _auswCurrentData=sArr;
+}
+var _auswCurrentData=[];
+function exportAuswertungCSV(){
+  var rows=[['Name','Klasse','Anwesend','Abwesend','Unentschuldigt','Quote%']];
+  _auswCurrentData.forEach(function(s){
+    var g=s.a+s.b+s.u||1;
+    rows.push([s.name,s.klasse,s.a,s.b,s.u,Math.round(s.a/g*100)+'%']);
+  });
+  downloadCSV(rows,'auswertung_export.csv');
+}
+
+/* ════════════════════════════════
+   EMAILJS EINSTELLUNGEN
+   ════════════════════════════════ */
+function loadEJS(){
+  _db.collection('einstellungen').doc('emailjs').get().then(function(s){
+    if(!s.exists)return;
+    var d=s.data();
+    document.getElementById('ejsPublic').value=d.publicKey||'';
+    document.getElementById('ejsService').value=d.serviceId||'';
+    document.getElementById('ejsTpl').value=d.templateId||'';
+  });
+  _db.collection('einstellungen').doc('registrierung').get().then(function(s){
+    if(!s.exists)return;
+    document.getElementById('regCode').value=s.data().code||'';
+  });
+}
+function saveRegCode(){
+  var code=document.getElementById('regCode').value.trim();
+  if(!code){showModalMsg('regCodeMsg','Bitte Code eingeben.','err');return;}
+  _db.collection('einstellungen').doc('registrierung').set({
+    code:code,
+    aktualisiert:firebase.firestore.FieldValue.serverTimestamp()
+  }).then(function(){
+    showModalMsg('regCodeMsg','✅ Code gespeichert!','ok');
+    setTimeout(function(){document.getElementById('regCodeMsg').style.display='none';},3000);
+  }).catch(function(e){showModalMsg('regCodeMsg',e.message,'err');});
+}
+
+function saveEJS(){
+  var data={
+    publicKey:document.getElementById('ejsPublic').value.trim(),
+    serviceId:document.getElementById('ejsService').value.trim(),
+    templateId:document.getElementById('ejsTpl').value.trim(),
+    aktualisiert:firebase.firestore.FieldValue.serverTimestamp()
+  };
+  _db.collection('einstellungen').doc('emailjs').set(data).then(function(){
+    showModalMsg('ejsMsg','✅ Gespeichert!','ok');
+    setTimeout(function(){document.getElementById('ejsMsg').style.display='none';},3000);
+  }).catch(function(e){showModalMsg('ejsMsg',e.message,'err');});
+}
+
+/* ════════════════════════════════
+   HELPERS
+   ════════════════════════════════ */
+function today(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function statusText(st){return st==='anwesend'?'Anwesend':st==='abwesend'?'Abwesend':st==='unentschuldigt'?'Unentschuldigt':'–';}
+function closeModal(id){document.getElementById(id).classList.remove('on');}
+function showModalMsg(id,msg,type){
+  var el=document.getElementById(id);
+  el.textContent=msg;el.className='adm-msg '+(type==='ok'?'ok':'err');el.style.display='block';
+}
+function toast(msg){
+  var el=document.getElementById('admToast');
+  el.textContent=msg;el.classList.add('show');
+  setTimeout(function(){el.classList.remove('show');},3000);
+}
+function downloadCSV(rows,filename){
+  var csv=rows.map(function(r){return r.map(function(c){return '"'+(String(c).replace(/"/g,'""'))+'"';}).join(',');}).join('\n');
+  var blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename;a.click();
+}
+
+/* Service Worker */
+if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js').catch(function(){});}
+</script>
+</body>
+</html>
